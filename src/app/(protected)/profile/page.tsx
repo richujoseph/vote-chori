@@ -1,231 +1,185 @@
 "use client";
 
 import { trpc } from "@/trpc/client";
-import { User, Mail, Shield, Calendar, BookOpen, GraduationCap, Hash, AlertTriangle } from "lucide-react";
+import { User, Mail, Shield, Calendar, BookOpen, GraduationCap, AlertTriangle, Trophy } from "lucide-react";
 
 export default function ProfilePage() {
     const { data: profile, isLoading } = trpc.auth.me.useQuery();
-
     const user = profile;
     const dbConnected = (profile as any)?.dbConnected ?? true;
 
     return (
-        <div className="page-content">
-            <h1 className="page-title">Profile</h1>
-            <p className="page-subtitle">Your academic and account information</p>
+        <div className="p-8 max-w-[1000px] mx-auto pb-20">
+            {/* Header */}
+            <div className="mb-10">
+                <h1 className="text-3xl font-extrabold text-[#1e1e2d] tracking-tight">Profile Setup</h1>
+                <p className="text-sm font-medium text-gray-400 mt-1">Manage your academic and account information</p>
+            </div>
 
             {!isLoading && !dbConnected && (
-                <div style={{
-                    background: "var(--danger-light)",
-                    color: "#991b1b",
-                    padding: "16px 24px",
-                    borderRadius: "12px",
-                    marginBottom: "24px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                    border: "1px solid #fecaca",
-                    fontSize: "14px",
-                    fontWeight: 500
-                }}>
-                    <AlertTriangle size={20} />
-                    <span>Database connection failed. Showing limited profile information. Admin features may be disabled.</span>
+                <div className="bg-red-50 text-red-700 px-6 py-4 rounded-2xl flex items-center gap-4 border border-red-100 mb-8 font-semibold text-sm shadow-sm">
+                    <AlertTriangle size={20} className="shrink-0" />
+                    <span>Database connection failed. Showing limited profile information. features may be disabled.</span>
                 </div>
             )}
 
-            <div className="card" style={{ maxWidth: 800, margin: "0 auto" }}>
-                <div className="card-body" style={{ padding: "40px" }}>
-                    {/* Header: Avatar + Identity */}
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 32,
-                            marginBottom: 40,
-                            paddingBottom: 32,
-                            borderBottom: "1px solid var(--border-light)",
-                        }}
-                    >
-                        <div
-                            className="sidebar-avatar"
-                            style={{
-                                width: 120,
-                                height: 120,
-                                borderRadius: "30%",
-                                fontSize: "36px",
-                                background: "var(--primary-gradient)",
-                                color: "white",
-                                boxShadow: "0 10px 20px -5px var(--primary-light)"
-                            }}
-                        >
-                            {isLoading ? (
-                                <div className="skeleton" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
-                            ) : user?.image ? (
-                                <img src={user.image} alt={user.name || ""} style={{ borderRadius: "inherit" }} />
-                            ) : (
-                                <span className="sidebar-avatar-fallback">
-                                    {(user?.name || "User")
-                                        .split(" ")
-                                        .map((n: string) => n[0])
-                                        .join("")
-                                        .toUpperCase()
-                                        .slice(0, 2)}
-                                </span>
-                            )}
-                        </div>
-                        <div>
-                            {isLoading ? (
-                                <>
-                                    <div className="skeleton" style={{ width: 200, height: 32, marginBottom: 12, borderRadius: 8 }} />
-                                    <div className="skeleton" style={{ width: 120, height: 24, borderRadius: 6 }} />
-                                </>
-                            ) : (
-                                <>
-                                    <h2
-                                        style={{
-                                            fontSize: 32,
-                                            fontWeight: 800,
-                                            color: "var(--text-primary)",
-                                            marginBottom: 8,
-                                            letterSpacing: "-0.5px"
-                                        }}
-                                    >
-                                        {user?.name}
-                                    </h2>
-                                    <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                                        <span
-                                            className={`badge ${user?.role === "admin" ? "badge-admin" : "badge-student"
-                                                }`}
-                                            style={{ padding: "6px 16px", fontSize: "14px" }}
-                                        >
-                                            {user?.role === "admin" ? "Administrator" : "Student"}
+            <div className="bg-white rounded-[32px] p-8 md:p-12 shadow-sm border border-gray-100">
+
+                {/* Header: Avatar + Identity */}
+                <div className="flex flex-col md:flex-row shadow-[0_4px_30px_rgba(59,54,140,0.03)] items-center md:items-start gap-8 border-b border-gray-50 pb-12 mb-12">
+                    <div className="w-32 h-32 rounded-[28px] bg-gradient-to-br from-[#3b368c] to-[#2e2a77] flex items-center justify-center text-white text-4xl font-black shadow-lg shadow-[#3b368c]/30 overflow-hidden shrink-0 border-4 border-white">
+                        {isLoading ? (
+                            <div className="w-full h-full bg-gray-200 animate-pulse" />
+                        ) : user?.image ? (
+                            <img src={user.image} alt={user.name || ""} className="w-full h-full object-cover" />
+                        ) : (
+                            <span>
+                                {(user?.name || "User")
+                                    .split(" ")
+                                    .map((n: string) => n[0])
+                                    .join("")
+                                    .toUpperCase()
+                                    .slice(0, 2)}
+                            </span>
+                        )}
+                    </div>
+
+                    <div className="flex-1 text-center md:text-left flex flex-col items-center md:items-start justify-center pt-2">
+                        {isLoading ? (
+                            <>
+                                <div className="w-48 h-10 bg-gray-100 rounded-lg animate-pulse mb-3" />
+                                <div className="w-32 h-6 bg-gray-100 rounded-full animate-pulse" />
+                            </>
+                        ) : (
+                            <>
+                                <h2 className="text-[32px] leading-tight font-extrabold text-[#1e1e2d] tracking-tight mb-4">
+                                    {user?.name}
+                                </h2>
+                                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                                    <span className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider ${user?.role === "admin"
+                                            ? "bg-purple-100 text-purple-700 border border-purple-200"
+                                            : "bg-[#e4e4fc] text-[#3b368c] border border-[#a5b4fc]/30"
+                                        }`}>
+                                        {user?.role === "admin" ? "Administrator" : "Student"}
+                                    </span>
+                                    {user?.department && (
+                                        <span className="font-semibold text-gray-500 text-sm bg-gray-50 px-4 py-1.5 rounded-full border border-gray-100">
+                                            {user.department}
                                         </span>
-                                        {user?.department && (
-                                            <span style={{ color: "var(--text-muted)", fontSize: "15px", fontWeight: 500 }}>
-                                                {user.department}
-                                            </span>
-                                        )}
-                                    </div>
+                                    )}
+                                </div>
+                            </>
+                        )}
+                    </div>
+                </div>
+
+                {/* Information Grid */}
+                <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
+
+                    {/* Personal Info */}
+                    <div className="bg-gray-50/50 p-8 rounded-[24px] border border-gray-100/50">
+                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-8 flex items-center gap-3">
+                            <User size={16} /> Personal Details
+                        </h3>
+
+                        <div className="space-y-8">
+                            {isLoading ? (
+                                <>
+                                    {[1, 2, 3].map(i => (
+                                        <div key={i} className="flex gap-4">
+                                            <div className="w-12 h-12 bg-gray-200 rounded-2xl animate-pulse shrink-0" />
+                                            <div className="flex-1 space-y-2 py-1">
+                                                <div className="w-16 h-3 bg-gray-200 rounded animate-pulse" />
+                                                <div className="w-32 h-4 bg-gray-200 rounded animate-pulse" />
+                                            </div>
+                                        </div>
+                                    ))}
+                                </>
+                            ) : (
+                                <>
+                                    <InfoRow icon={<User size={20} />} label="Full Name" value={user?.name} />
+                                    <InfoRow icon={<Mail size={20} />} label="Email Address" value={user?.email} />
+                                    <InfoRow
+                                        icon={<Shield size={20} />}
+                                        label="Account Role"
+                                        value={
+                                            <div className="flex items-center gap-2">
+                                                <span className="capitalize">{user?.role}</span>
+                                                {!dbConnected && (
+                                                    <span className="bg-red-100 text-red-700 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md">
+                                                        Disconnected
+                                                    </span>
+                                                )}
+                                            </div>
+                                        }
+                                    />
                                 </>
                             )}
                         </div>
                     </div>
 
-                    {/* Information Grid */}
-                    <div style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-                        gap: "24px"
-                    }}>
-                        {/* Personal Info Group */}
-                        <div style={{ background: "rgba(255,255,255,0.4)", padding: "24px", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
-                            <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "20px", color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "1px" }}>Personal Details</h3>
-                            <div style={{ display: "grid", gap: 20 }}>
-                                {isLoading ? (
-                                    <>
-                                        {[1, 2, 3].map(i => (
-                                            <div key={i} style={{ display: "flex", gap: 16 }}>
-                                                <div className="skeleton" style={{ width: 42, height: 42, borderRadius: 12 }} />
-                                                <div style={{ flex: 1 }}>
-                                                    <div className="skeleton" style={{ width: 60, height: 12, marginBottom: 6 }} />
-                                                    <div className="skeleton" style={{ width: 150, height: 16 }} />
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </>
-                                ) : (
-                                    <>
-                                        <InfoRow icon={<User size={18} />} label="Full Name" value={user?.name} />
-                                        <InfoRow icon={<Mail size={18} />} label="Email Address" value={user?.email} />
-                                        <InfoRow
-                                            icon={<Shield size={18} />}
-                                            label="Account Role"
-                                            value={
-                                                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                                    <span style={{ textTransform: "capitalize" }}>{user?.role}</span>
-                                                    {!dbConnected && (
-                                                        <span style={{
-                                                            fontSize: "10px",
-                                                            background: "var(--danger-light)",
-                                                            color: "var(--danger)",
-                                                            padding: "2px 6px",
-                                                            borderRadius: "4px",
-                                                            fontWeight: 700,
-                                                            textTransform: "uppercase"
-                                                        }}>
-                                                            Disconnected
-                                                        </span>
-                                                    )}
-                                                </div>
-                                            }
-                                        />
-                                    </>
-                                )}
-                            </div>
-                        </div>
+                    {/* Academic Info */}
+                    <div className="bg-gray-50/50 p-8 rounded-[24px] border border-gray-100/50">
+                        <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest mb-8 flex items-center gap-3">
+                            <GraduationCap size={16} /> Academic Status
+                        </h3>
 
-                        {/* Academic Info Group */}
-                        <div style={{ background: "rgba(255,255,255,0.4)", padding: "24px", borderRadius: "16px", border: "1px solid var(--border-light)" }}>
-                            <h3 style={{ fontSize: "16px", fontWeight: 700, marginBottom: "20px", color: "var(--text-primary)", textTransform: "uppercase", letterSpacing: "1px" }}>Academic Status</h3>
-                            <div style={{ display: "grid", gap: 20 }}>
-                                {isLoading ? (
-                                    <>
-                                        {[1, 2, 3, 4].map(i => (
-                                            <div key={i} style={{ display: "flex", gap: 16 }}>
-                                                <div className="skeleton" style={{ width: 42, height: 42, borderRadius: 12 }} />
-                                                <div style={{ flex: 1 }}>
-                                                    <div className="skeleton" style={{ width: 60, height: 12, marginBottom: 6 }} />
-                                                    <div className="skeleton" style={{ width: 150, height: 16 }} />
-                                                </div>
+                        <div className="space-y-8">
+                            {isLoading ? (
+                                <>
+                                    {[1, 2, 3].map(i => (
+                                        <div key={i} className="flex gap-4">
+                                            <div className="w-12 h-12 bg-gray-200 rounded-2xl animate-pulse shrink-0" />
+                                            <div className="flex-1 space-y-2 py-1">
+                                                <div className="w-16 h-3 bg-gray-200 rounded animate-pulse" />
+                                                <div className="w-32 h-4 bg-gray-200 rounded animate-pulse" />
                                             </div>
-                                        ))}
-                                    </>
-                                ) : (
-                                    <>
-                                        {user?.department && (
-                                            <InfoRow icon={<BookOpen size={18} />} label="Department" value={user.department} />
-                                        )}
-                                        {user?.batch && (
-                                            <InfoRow icon={<GraduationCap size={18} />} label="Academic Batch" value={user.batch} />
-                                        )}
-                                        <InfoRow icon={<Calendar size={18} />} label="Member Since" value={user?.createdAt ? new Date(user.createdAt).toLocaleDateString("en-IN", {
+                                        </div>
+                                    ))}
+                                </>
+                            ) : (
+                                <>
+                                    <InfoRow
+                                        icon={<BookOpen size={20} />}
+                                        label="Department"
+                                        value={user?.department || <span className="text-gray-300 italic">Not set</span>}
+                                    />
+                                    <InfoRow
+                                        icon={<Trophy size={20} />}
+                                        label="Academic Batch"
+                                        value={user?.batch || <span className="text-gray-300 italic">Not set</span>}
+                                    />
+                                    <InfoRow
+                                        icon={<Calendar size={20} />}
+                                        label="Member Since"
+                                        value={user?.createdAt ? new Date(user.createdAt).toLocaleDateString("en-IN", {
                                             day: "numeric", month: "long", year: "numeric"
-                                        }) : "-"} />
-                                    </>
-                                )}
-                            </div>
+                                        }) : "-"}
+                                    />
+                                </>
+                            )}
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     );
 }
 
-function InfoRow({ icon, label, value, style }: { icon: React.ReactNode, label: string, value?: React.ReactNode, style?: React.CSSProperties }) {
+function InfoRow({ icon, label, value }: { icon: React.ReactNode, label: string, value?: React.ReactNode }) {
     return (
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <div style={{
-                width: 42,
-                height: 42,
-                borderRadius: 12,
-                background: "white",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "var(--primary)",
-                boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
-                flexShrink: 0,
-            }}>
+        <div className="flex items-center gap-5">
+            <div className="w-[52px] h-[52px] rounded-[18px] bg-white flex items-center justify-center text-[#3b368c] shadow-sm border border-gray-100/60 shrink-0">
                 {icon}
             </div>
-            <div>
-                <div style={{ fontSize: 12, color: "var(--text-muted)", marginBottom: 2, fontWeight: 500 }}>
+            <div className="flex flex-col gap-1">
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wide">
                     {label}
-                </div>
-                <div style={{ fontSize: 15, fontWeight: 600, color: "var(--text-primary)", ...style }}>
+                </span>
+                <span className="text-[15px] font-bold text-[#1e1e2d]">
                     {value || "—"}
-                </div>
+                </span>
             </div>
         </div>
     );
