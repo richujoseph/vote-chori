@@ -39,57 +39,41 @@ function LoginContent() {
     };
 
     return (
-        <div className="login-container">
-            <div className="login-card">
-                <div className="login-logo">
-                    <Vote
-                        size={40}
-                        style={{ display: "inline", marginRight: 8, verticalAlign: "middle" }}
-                    />
-                    SJCETVote
+        <div className="min-h-screen flex items-center justify-center bg-[#f5f6fa] p-4 text-center">
+            <div className="bg-white rounded-[32px] p-10 md:p-14 shadow-[0_10px_40px_rgba(59,54,140,0.05)] border border-gray-100 max-w-[480px] w-full flex flex-col items-center">
+                <div className="w-20 h-20 bg-[#3b368c] rounded-3xl flex items-center justify-center shadow-lg shadow-[#3b368c]/20 mb-8">
+                    <Vote size={40} className="text-white" />
                 </div>
-                <h1 className="login-title">Welcome Back</h1>
-                <p className="login-subtitle">
-                    Sign in with your SJCET Google account to access the online election
-                    portal.
+
+                <h1 className="text-3xl font-extrabold text-[#1e1e2d] mb-3">iVOTE System</h1>
+                <p className="text-sm font-medium text-gray-400 mb-10 w-full max-w-[320px]">
+                    Sign in with your SJCET Google account to access the online election portal.
                 </p>
 
                 {error && (
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 8,
-                            padding: "12px 16px",
-                            background: "#fee2e2",
-                            borderRadius: 8,
-                            marginBottom: 20,
-                            fontSize: 13,
-                            color: "#991b1b",
-                        }}
-                    >
-                        <AlertCircle size={16} />
+                    <div className="flex items-center gap-3 px-4 py-3 bg-red-50 rounded-xl mb-6 text-sm font-semibold text-red-600 w-full text-left">
+                        <AlertCircle size={20} className="shrink-0" />
                         {error === "unauthorized_domain"
                             ? "Access denied. Only @cy.sjcetpalai.ac.in emails are allowed."
                             : "An error occurred during sign in. Please try again."}
                     </div>
                 )}
 
-                <div className="login-domain-notice">
+                <div className="flex items-center justify-center gap-2 bg-[#f0f0ff] text-[#3b368c] text-xs font-bold px-4 py-2 rounded-full mb-8">
                     <Shield size={16} />
-                    Only <strong>@cy.sjcetpalai.ac.in</strong> accounts are allowed
+                    Only @cy.sjcetpalai.ac.in accounts allowed
                 </div>
 
                 <button
-                    className="google-btn"
                     onClick={handleGoogleSignIn}
                     disabled={loading}
+                    className="w-full h-14 bg-white border-2 border-gray-200 rounded-full flex items-center justify-center gap-3 font-bold text-[#1e1e2d] hover:border-gray-300 hover:bg-gray-50 transition-all disabled:opacity-50"
                 >
                     {loading ? (
-                        <div className="spinner" style={{ width: 20, height: 20, borderWidth: 2 }} />
+                        <div className="w-5 h-5 border-2 border-[#1e1e2d]/30 border-t-[#1e1e2d] rounded-full animate-spin" />
                     ) : (
                         <>
-                            <svg width="20" height="20" viewBox="0 0 24 24">
+                            <svg width="24" height="24" viewBox="0 0 24 24">
                                 <path
                                     fill="#4285F4"
                                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
@@ -107,21 +91,13 @@ function LoginContent() {
                                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                                 />
                             </svg>
-                            Sign in with Google
+                            Continue with Google
                         </>
                     )}
                 </button>
 
-                <p
-                    style={{
-                        marginTop: 24,
-                        fontSize: 12,
-                        color: "var(--text-muted)",
-                        lineHeight: 1.5,
-                    }}
-                >
-                    By signing in, you agree to participate in the SJCET student election
-                    process. Your vote is confidential.
+                <p className="mt-8 text-xs font-medium text-gray-400 max-w-[280px]">
+                    By signing in, you agree to participate in the SJCET student election process. Your vote is confidential.
                 </p>
             </div>
         </div>
@@ -132,7 +108,7 @@ export default function LoginPage() {
     return (
         <Suspense
             fallback={
-                <div className="login-container">
+                <div className="min-h-screen flex items-center justify-center bg-[#f5f6fa]">
                     <div className="spinner" />
                 </div>
             }
