@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { db } from '@/db'
 import { users } from '@/db/schema'
 import { eq } from 'drizzle-orm'
+import { extractStudentDetails } from '@/lib/auth-utils'
 
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url)
@@ -20,20 +21,44 @@ export async function GET(request: Request) {
                 return NextResponse.redirect(`${origin}/login?error=unauthorized_domain`)
             }
 
-            // Sync user to our database if they don't exist
             const email = data.user.email!
-            const existingUser = await db
-                .select()
-                .from(users)
-                .where(eq(users.email, email))
-                .limit(1)
 
-            if (existingUser.length === 0) {
-                await db.insert(users).values({
-                    email,
-                    name: data.user.user_metadata.full_name || data.user.user_metadata.name || "Student",
-                    image: data.user.user_metadata.avatar_url || data.user.user_metadata.picture || null,
-                })
+            // Extract student details from email if it follows the pattern (e.g., 22cs001@cy.sjcetpalai.ac.in)
+            try {
+                const studentDetails = extractStudentDetails(email);
+
+                const existingUser = await db
+                    .select({
+                        id: users.id,
+                        name: users.name,
+                        email: users.email,
+                        image: users.image,
+                        role: users.role,
+                    })
+                    .from(users)
+                    .where(eq(users.email, email))
+                    .limit(1)
+
+                if (existingUser.length === 0) {
+                    await db.insert(users).values({
+                        email,
+                        name: data.user.user_metadata.full_name || data.user.user_metadata.name || email.split('@')[0],
+                        image: data.user.user_metadata.avatar_url || data.user.user_metadata.picture || null,
+                        ...studentDetails,
+                    })
+                } else {
+                    // Update existing user with new details if missing or if name is still placeholder
+                    await db.update(users)
+                        .set({
+                            name: data.user.user_metadata.full_name || data.user.user_metadata.name || (existingUser[0].name === "Student" ? email.split('@')[0] : existingUser[0].name),
+                            image: data.user.user_metadata.avatar_url || data.user.user_metadata.picture || existingUser[0].image,
+                            ...studentDetails,
+                        })
+                        .where(eq(users.email, email));
+                }
+            } catch (dbError) {
+                console.error("Auth Callback: Database sync error:", dbError);
+                // We proceed even if DB sync fails, but the user might lack permissions/profile
             }
 
             const forwardedHost = request.headers.get('x-forwarded-host')

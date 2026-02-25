@@ -101,18 +101,18 @@ export default function AdminDashboardPage() {
                                             </span>
                                         </td>
                                         <td style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                                            {new Date(election.startTime).toLocaleDateString("en-IN", {
+                                            {election.startTime ? new Date(election.startTime).toLocaleDateString("en-IN", {
                                                 day: "numeric",
                                                 month: "short",
                                                 year: "numeric",
-                                            })}
+                                            }) : "Manual"}
                                         </td>
                                         <td style={{ fontSize: 13, color: "var(--text-muted)" }}>
-                                            {new Date(election.endTime).toLocaleDateString("en-IN", {
+                                            {election.endTime ? new Date(election.endTime).toLocaleDateString("en-IN", {
                                                 day: "numeric",
                                                 month: "short",
                                                 year: "numeric",
-                                            })}
+                                            }) : "Manual"}
                                         </td>
                                         <td>
                                             <div style={{ display: "flex", gap: 6 }}>

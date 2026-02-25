@@ -5,17 +5,21 @@ import Link from "next/link";
 import { Vote, Users, BarChart3, Clock, CalendarDays, ArrowRight } from "lucide-react";
 
 export default function DashboardPage() {
-    const { data: user } = trpc.auth.me.useQuery();
+    const { data: user, isLoading: userLoading } = trpc.auth.me.useQuery();
     const { data: ongoingElections, isLoading: electionsLoading } =
         trpc.election.getOngoing.useQuery();
     const { data: allElections } = trpc.election.getAll.useQuery();
 
-    const firstName = user?.name?.split(" ")[0] || "Student";
+    const firstName = user?.name ? user.name.split(" ")[0] : user?.email?.split('@')[0] || "User";
 
     return (
         <div className="page-content">
             {/* Greeting */}
-            <h1 className="page-title">Hello, {firstName}!</h1>
+            {userLoading ? (
+                <div className="skeleton" style={{ width: 250, height: 32, marginBottom: 8, borderRadius: 8 }} />
+            ) : (
+                <h1 className="page-title">Hello, {firstName}!</h1>
+            )}
             <p className="page-subtitle">
                 Welcome to SJCET&apos;s Online Voting System
             </p>
@@ -118,22 +122,26 @@ export default function DashboardPage() {
                                                 color: "var(--text-muted)",
                                             }}
                                         >
-                                            <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                                                <CalendarDays size={14} />
-                                                Ends:{" "}
-                                                {new Date(election.endTime).toLocaleDateString("en-IN", {
-                                                    day: "numeric",
-                                                    month: "short",
-                                                    year: "numeric",
-                                                })}
-                                            </span>
-                                            <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                                                <Clock size={14} />
-                                                {new Date(election.endTime).toLocaleTimeString("en-IN", {
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                })}
-                                            </span>
+                                            {election.endTime && (
+                                                <>
+                                                    <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                                                        <CalendarDays size={14} />
+                                                        Ends:{" "}
+                                                        {new Date(election.endTime).toLocaleDateString("en-IN", {
+                                                            day: "numeric",
+                                                            month: "short",
+                                                            year: "numeric",
+                                                        })}
+                                                    </span>
+                                                    <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                                                        <Clock size={14} />
+                                                        {new Date(election.endTime).toLocaleTimeString("en-IN", {
+                                                            hour: "2-digit",
+                                                            minute: "2-digit",
+                                                        })}
+                                                    </span>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                     <Link
@@ -198,11 +206,11 @@ export default function DashboardPage() {
                                                 </span>
                                             </td>
                                             <td style={{ color: "var(--text-muted)", fontSize: 13 }}>
-                                                {new Date(election.startTime).toLocaleDateString("en-IN", {
+                                                {election.startTime ? new Date(election.startTime).toLocaleDateString("en-IN", {
                                                     day: "numeric",
                                                     month: "short",
                                                     year: "numeric",
-                                                })}
+                                                }) : "Manual"}
                                             </td>
                                             <td>
                                                 <Link

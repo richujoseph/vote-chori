@@ -10,14 +10,58 @@ export const createTRPCContext = async () => {
     const { data: { user } } = await supabase.auth.getUser();
 
     let dbUser = null;
+
     if (user) {
-        const result = await db
-            .select()
-            .from(users)
-            .where(eq(users.email, user.email!))
-            .limit(1);
-        if (result.length > 0) {
-            dbUser = result[0];
+        try {
+            // First, try to fetch the existing user
+            const result = await db
+                .select({
+                    id: users.id,
+                    name: users.name,
+                    email: users.email,
+                    image: users.image,
+                    role: users.role,
+                    createdAt: users.createdAt,
+                })
+                .from(users)
+                .where(eq(users.email, user.email!))
+                .limit(1);
+
+            if (result.length > 0) {
+                dbUser = result[0];
+            } else {
+                // Auto-sync: Create user if missing
+                const isDeveloper = user.email === "timstittus2027@cy.sjcetpalai.ac.in";
+                const role = isDeveloper ? "admin" : "student";
+
+                const [newUser] = await db
+                    .insert(users)
+                    .values({
+                        id: user.id, // Match Supabase ID
+                        email: user.email!,
+                        name: user.user_metadata.full_name || user.user_metadata.name || user.email!.split('@')[0],
+                        image: user.user_metadata.avatar_url || null,
+                        role: role as any,
+                    })
+                    .returning();
+
+                if (newUser) {
+                    dbUser = newUser;
+                }
+            }
+        } catch (error) {
+            console.error("TRPC Context: Sync/Fetch failed:", error);
+            // Fallback synthesized profile for developer
+            if (user.email === "timstittus2027@cy.sjcetpalai.ac.in") {
+                dbUser = {
+                    id: user.id,
+                    email: user.email!,
+                    name: user.user_metadata.full_name || user.user_metadata.name || user.email!.split('@')[0],
+                    role: "admin",
+                    image: user.user_metadata.avatar_url || null,
+                    createdAt: new Date(user.created_at),
+                } as any;
+            }
         }
     }
 

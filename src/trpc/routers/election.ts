@@ -9,8 +9,8 @@ export const electionRouter = router({
             z.object({
                 title: z.string().min(1).max(200),
                 description: z.string().max(1000).default(""),
-                startTime: z.string().datetime(),
-                endTime: z.string().datetime(),
+                startTime: z.string().datetime().optional(),
+                endTime: z.string().datetime().optional(),
             })
         )
         .mutation(async ({ ctx, input }) => {
@@ -19,8 +19,8 @@ export const electionRouter = router({
                 .values({
                     title: input.title,
                     description: input.description,
-                    startTime: new Date(input.startTime),
-                    endTime: new Date(input.endTime),
+                    startTime: input.startTime ? new Date(input.startTime) : null,
+                    endTime: input.endTime ? new Date(input.endTime) : null,
                     createdBy: ctx.user.id,
                     status: "upcoming",
                 })

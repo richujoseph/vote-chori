@@ -27,12 +27,12 @@ export default function CreateElectionPage() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!form.title || !form.startTime || !form.endTime) {
-            toast.error("Please fill in all required fields");
+        if (!form.title) {
+            toast.error("Please fill in election title");
             return;
         }
 
-        if (new Date(form.endTime) <= new Date(form.startTime)) {
+        if (form.startTime && form.endTime && new Date(form.endTime) <= new Date(form.startTime)) {
             toast.error("End time must be after start time");
             return;
         }
@@ -40,8 +40,8 @@ export default function CreateElectionPage() {
         createElection.mutate({
             title: form.title,
             description: form.description,
-            startTime: new Date(form.startTime).toISOString(),
-            endTime: new Date(form.endTime).toISOString(),
+            startTime: form.startTime ? new Date(form.startTime).toISOString() : undefined,
+            endTime: form.endTime ? new Date(form.endTime).toISOString() : undefined,
         });
     };
 
@@ -109,7 +109,7 @@ export default function CreateElectionPage() {
                         >
                             <div className="form-group">
                                 <label className="form-label">
-                                    Start Time <span style={{ color: "var(--danger)" }}>*</span>
+                                    Start Time
                                 </label>
                                 <input
                                     className="form-input"
@@ -118,13 +118,12 @@ export default function CreateElectionPage() {
                                     onChange={(e) =>
                                         setForm((f) => ({ ...f, startTime: e.target.value }))
                                     }
-                                    required
                                 />
                             </div>
 
                             <div className="form-group">
                                 <label className="form-label">
-                                    End Time <span style={{ color: "var(--danger)" }}>*</span>
+                                    End Time
                                 </label>
                                 <input
                                     className="form-input"
@@ -133,7 +132,6 @@ export default function CreateElectionPage() {
                                     onChange={(e) =>
                                         setForm((f) => ({ ...f, endTime: e.target.value }))
                                     }
-                                    required
                                 />
                             </div>
                         </div>

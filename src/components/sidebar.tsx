@@ -33,20 +33,18 @@ const adminNavItems = [
 export function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
-    const { data: user } = trpc.auth.me.useQuery();
+    const { data: user, isLoading: userLoading } = trpc.auth.me.useQuery();
     const [mobileOpen, setMobileOpen] = useState(false);
     const supabase = createClient();
 
     const isAdmin = user?.role === "admin";
 
-    const initials = user?.name
-        ? user.name
-            .split(" ")
-            .map((n) => n[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2)
-        : "?";
+    const initials = (user?.name || user?.email || "?")
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2);
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
@@ -97,13 +95,19 @@ export function Sidebar() {
                 {/* Profile */}
                 <div className="sidebar-profile">
                     <div className="sidebar-avatar">
-                        {user?.image ? (
+                        {userLoading ? (
+                            <div className="skeleton" style={{ width: "100%", height: "100%", borderRadius: "inherit" }} />
+                        ) : user?.image ? (
                             <img src={user.image} alt={user.name || ""} />
                         ) : (
                             <span className="sidebar-avatar-fallback">{initials}</span>
                         )}
                     </div>
-                    <span className="sidebar-name">{user?.name || "Student"}</span>
+                    {userLoading ? (
+                        <div className="skeleton" style={{ width: 80, height: 16, marginTop: 4 }} />
+                    ) : (
+                        <span className="sidebar-name">{user?.name || user?.email?.split('@')[0] || "User"}</span>
+                    )}
                     <Link
                         href="/profile"
                         className="sidebar-view-profile"

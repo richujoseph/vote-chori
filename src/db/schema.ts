@@ -24,6 +24,8 @@ export const users = pgTable("users", {
     emailVerified: timestamp("email_verified", { withTimezone: true }),
     image: text("image"),
     role: userRoleEnum("role").notNull().default("student"),
+    department: text("department"),
+    batch: text("batch"),
     createdAt: timestamp("created_at", { withTimezone: true })
         .notNull()
         .defaultNow(),
@@ -70,8 +72,8 @@ export const elections = pgTable("elections", {
     title: text("title").notNull(),
     description: text("description").notNull().default(""),
     status: electionStatusEnum("status").notNull().default("upcoming"),
-    startTime: timestamp("start_time", { withTimezone: true }).notNull(),
-    endTime: timestamp("end_time", { withTimezone: true }).notNull(),
+    startTime: timestamp("start_time", { withTimezone: true }),
+    endTime: timestamp("end_time", { withTimezone: true }),
     createdBy: uuid("created_by")
         .notNull()
         .references(() => users.id),
