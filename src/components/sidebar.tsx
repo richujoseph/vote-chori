@@ -42,7 +42,7 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean, se
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
-        router.push("/login");
+        router.push("/");
     };
 
     return (
