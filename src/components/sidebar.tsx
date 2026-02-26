@@ -9,7 +9,6 @@ import {
     LayoutDashboard,
     Vote,
     BookOpenText,
-    Settings,
     LogOut,
     Shield,
     PlusCircle,
@@ -70,7 +69,11 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean, se
 
                 {/* Profile Peek */}
                 <div className="px-6 mb-12">
-                    <Link href="/profile" className="bg-gray-50/50 rounded-3xl p-5 border border-gray-50 flex items-center gap-4 group hover:bg-[#3b368c]/5 transition-all">
+                    <Link
+                        href="/profile"
+                        className="bg-gray-50/50 rounded-3xl p-5 border border-gray-50 flex items-center gap-4 group hover:bg-[#3b368c]/5 transition-all"
+                        onClick={() => setMobileOpen(false)}
+                    >
                         <div className="w-12 h-12 rounded-2xl bg-[#f0f0ff] flex items-center justify-center overflow-hidden border-2 border-white shadow-sm shrink-0 group-hover:scale-105 transition-transform">
                             {userLoading ? (
                                 <div className="w-full h-full bg-gray-100 animate-pulse" />
@@ -145,14 +148,6 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean, se
 
                 {/* Bottom Actions */}
                 <div className="p-6 space-y-3">
-                    <Link
-                        href="/settings"
-                        className="flex items-center gap-4 px-6 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest text-gray-400 hover:text-[#1e1e2d] hover:bg-gray-50 transition-all"
-                        onClick={() => setMobileOpen(false)}
-                    >
-                        <Settings size={18} />
-                        <span>Settings</span>
-                    </Link>
                     <button
                         onClick={handleSignOut}
                         className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest text-[#1e1e2d] hover:bg-red-50 hover:text-red-500 transition-all border border-gray-100/50"
