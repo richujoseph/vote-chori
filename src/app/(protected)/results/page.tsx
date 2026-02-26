@@ -3,7 +3,7 @@
 import { trpc } from "@/trpc/client";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense, useState, useMemo } from "react";
-import { BarChart3, Users, Trophy, ChevronRight, TrendingUp, Award, Zap } from "lucide-react";
+import { BarChart3, Users, Trophy, ChevronRight, TrendingUp, Award, Zap, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 
 function ResultsContent() {
@@ -15,14 +15,14 @@ function ResultsContent() {
     const { data: elections } = trpc.election.getAll.useQuery();
     const activeElectionId = electionId || elections?.[0]?.id;
 
-    const { data: election } = trpc.election.getById.useQuery(
-        { id: activeElectionId! },
-        { enabled: !!activeElectionId }
-    );
-    const { data: results, isLoading } = trpc.vote.getResults.useQuery(
+    const { data: resultsData, isLoading } = trpc.vote.getResults.useQuery(
         { electionId: activeElectionId! },
         { enabled: !!activeElectionId }
     );
+
+    const election = resultsData?.election;
+    const results = resultsData?.results;
+    const resultsHidden = resultsData?.resultsHidden;
 
     // Get categories from results for the tab system
     const categories = useMemo(() => {
@@ -113,14 +113,13 @@ function ResultsContent() {
                     {/* Status Banner */}
                     <div className="flex items-center gap-4 bg-white border border-gray-100 p-4 md:p-5 rounded-[24px] w-fit shadow-sm mx-auto mb-16 px-6 md:px-8">
                         <div className="flex items-center gap-2 pr-4 border-r border-gray-100">
-                            <span className="relative flex h-2 w-2">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                            <Award size={20} className="text-yellow-500" />
+                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
+                                {election?.status === "ongoing" ? "Live Progress" : "Final Tally"}
                             </span>
-                            <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Live</span>
                         </div>
-                        <span className="text-xs md:text-sm font-black text-[#1e1e2d] tracking-tight">
-                            Total Votes Casted: <span className="text-[#3b368c] font-black">{activeResult.totalVotes.toLocaleString()}</span>
+                        <span className="text-xs md:text-sm font-black text-[#1e1e2d] tracking-tight uppercase tracking-widest text-[10px]">
+                            Results showing as <span className="text-[#3b368c] font-black">Relative Percentage</span>
                         </span>
                     </div>
 
@@ -139,9 +138,6 @@ function ResultsContent() {
                                     </div>
                                     <span className="text-5xl md:text-6xl font-black text-white italic tracking-tighter drop-shadow-lg">
                                         {activeResult.totalVotes > 0 ? Math.round((activeResult.candidates[0].voteCount / activeResult.totalVotes) * 100) : 0}%
-                                    </span>
-                                    <span className="text-white/40 text-[10px] font-black uppercase tracking-widest mt-2">
-                                        {activeResult.candidates[0].voteCount.toLocaleString()} Votes
                                     </span>
 
                                     <div className="absolute -bottom-16 md:-bottom-24 left-1/2 -translate-x-1/2 w-32 h-32 md:w-44 md:h-44 rounded-full border-[6px] border-white shadow-2xl overflow-hidden z-20 group-hover:scale-105 transition-transform duration-500">
@@ -178,9 +174,6 @@ function ResultsContent() {
                                     <span className="text-5xl md:text-6xl font-black text-white italic tracking-tighter drop-shadow-md">
                                         {activeResult.totalVotes > 0 ? Math.round((activeResult.candidates[1].voteCount / activeResult.totalVotes) * 100) : 0}%
                                     </span>
-                                    <span className="text-white/40 text-[10px] font-black uppercase tracking-widest mt-2">
-                                        {activeResult.candidates[1].voteCount.toLocaleString()} Votes
-                                    </span>
 
                                     <div className="absolute -bottom-16 md:-bottom-24 left-1/2 -translate-x-1/2 w-32 h-32 md:w-44 md:h-44 rounded-full border-[6px] border-white shadow-2xl overflow-hidden z-20 group-hover:scale-105 transition-transform duration-500">
                                         {activeResult.candidates[1].photoUrl ? (
@@ -211,7 +204,7 @@ function ResultsContent() {
                                 {Math.abs(Math.round(((activeResult.candidates[0].voteCount - activeResult.candidates[1].voteCount) / (activeResult.totalVotes || 1)) * 100))}%
                             </div>
                             <span className="text-xs font-bold text-gray-400">
-                                Exactly <span className="text-[#3b368c]">{Math.abs(activeResult.candidates[0].voteCount - activeResult.candidates[1].voteCount).toLocaleString()}</span> votes ahead
+                                Leading by <span className="text-[#3b368c]">percentage gap</span>
                             </span>
                         </div>
                     )}
@@ -249,7 +242,6 @@ function ResultsContent() {
                                                 </div>
                                                 <div className="flex flex-col items-end shrink-0">
                                                     <span className="text-xl font-black text-[#1e1e2d]">{percentage}%</span>
-                                                    <span className="text-[10px] font-bold text-gray-300 uppercase tracking-tighter">{candidate.voteCount.toLocaleString()} Votes</span>
                                                 </div>
                                             </div>
                                         );

@@ -34,14 +34,14 @@ export const analyticsRouter = router({
                 .limit(1);
 
             if (!completedElection) return null;
-            return await getElectionResults(ctx.db, completedElection.id);
+            return await getElectionResults(ctx.db, completedElection.id, "completed");
         }
 
-        return await getElectionResults(ctx.db, latestElection.id);
+        return await getElectionResults(ctx.db, latestElection.id, "ongoing");
     }),
 });
 
-async function getElectionResults(db: any, electionId: string) {
+async function getElectionResults(db: any, electionId: string, status: string) {
     // Get all categories for this election
     const electionCategories = await db
         .select()
@@ -75,6 +75,7 @@ async function getElectionResults(db: any, electionId: string) {
 
     return {
         electionTitle: category.title,
+        status,
         candidates: candidateResults.sort((a, b) => b.voteCount - a.voteCount).slice(0, 3),
         totalVotes,
     };

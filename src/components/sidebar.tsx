@@ -87,7 +87,14 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean, se
                             {userLoading ? (
                                 <div className="w-20 h-4 bg-gray-100 animate-pulse rounded-full mb-1" />
                             ) : (
-                                <span className="font-black text-sm text-[#1e1e2d] truncate">{user?.name?.split(' ')[0] || "User"}</span>
+                                <>
+                                    <span className="font-black text-sm text-[#1e1e2d] truncate">{user?.name?.split(' ')[0] || "User"}</span>
+                                    {(user?.department || user?.batch) && (
+                                        <span className="text-[9px] font-bold text-gray-400 truncate uppercase tracking-tighter">
+                                            {user.department || user.batch}
+                                        </span>
+                                    )}
+                                </>
                             )}
                             <div className="text-[10px] font-black text-[#3b368c] uppercase tracking-widest opacity-60 group-hover:opacity-100 transition-opacity flex items-center mt-0.5">
                                 My Profile <ChevronRight size={10} className="ml-0.5" />

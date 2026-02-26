@@ -21,6 +21,8 @@ export const createTRPCContext = async () => {
                     email: users.email,
                     image: users.image,
                     role: users.role,
+                    department: users.department,
+                    batch: users.batch,
                     createdAt: users.createdAt,
                 })
                 .from(users)

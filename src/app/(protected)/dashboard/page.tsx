@@ -93,7 +93,7 @@ export default function DashboardPage() {
                                             <div key={i} className="space-y-2">
                                                 <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
                                                     <span className="text-gray-400 truncate max-w-[150px]">{item.name}</span>
-                                                    <span className="text-[#1e1e2d]">{item.voteCount} votes ({percentage}%)</span>
+                                                    <span className="text-[#101010]">{percentage}%</span>
                                                 </div>
                                                 <div className="w-full h-3 bg-gray-50 rounded-full overflow-hidden">
                                                     <div
@@ -207,12 +207,6 @@ export default function DashboardPage() {
                             </div>
                         </div>
 
-                        <div className="mt-10 pt-8 border-t border-gray-50">
-                            <div className="flex items-center gap-2 text-[10px] font-black text-[#3b368c] uppercase tracking-widest">
-                                <ShieldCheck size={12} />
-                                <span>Secured by Blockchain</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>

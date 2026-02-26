@@ -1,14 +1,10 @@
-import { createClient } from "@supabase/supabase-js";
-
-export const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { createClient } from "./supabase/client";
 
 export async function uploadCandidatePhoto(
     file: File,
     candidateId: string
 ): Promise<string> {
+    const supabase = createClient();
     const fileExt = file.name.split(".").pop();
     const fileName = `${candidateId}-${Date.now()}.${fileExt}`;
     const filePath = `candidate-photos/${fileName}`;

@@ -45,8 +45,7 @@ export const authRouter = router({
             image: ctx.user.user_metadata.avatar_url || ctx.user.user_metadata.picture || null,
             role: isDeveloper ? "admin" : "student",
             createdAt: new Date(ctx.user.created_at),
-            department: null,
-            batch: null,
+            ...studentDetails,
             dbConnected: false,
         };
     }),

@@ -120,6 +120,17 @@ export const voteRouter = router({
     getResults: protectedProcedure
         .input(z.object({ electionId: z.string().uuid() }))
         .query(async ({ ctx, input }) => {
+            // Get election status
+            const [election] = await ctx.db
+                .select()
+                .from(elections)
+                .where(eq(elections.id, input.electionId))
+                .limit(1);
+
+            if (!election) throw new TRPCError({ code: "NOT_FOUND", message: "Election not found" });
+
+            const isOngoing = election.status === "ongoing";
+
             // Get all categories for this election
             const electionCategories = await ctx.db
                 .select()
@@ -156,9 +167,14 @@ export const voteRouter = router({
                     category,
                     candidates: candidateResults,
                     totalVotes: candidateResults.reduce((sum, c) => sum + c.voteCount, 0),
+                    resultsHidden: false, // Default to false as we want them visible as percentages
                 });
             }
 
-            return results;
+            return {
+                election,
+                results,
+                resultsHidden: false, // Default to false
+            };
         }),
 });
