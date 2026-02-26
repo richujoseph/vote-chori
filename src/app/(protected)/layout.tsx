@@ -1,12 +1,14 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { User } from "@supabase/supabase-js";
 import { Search, Bell, HelpCircle, Menu } from "lucide-react";
 import { trpc } from "@/trpc/client";
+import { getInitials } from "@/lib/utils";
 
 export default function ProtectedLayout({
     children,
@@ -87,9 +89,9 @@ export default function ProtectedLayout({
                             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                         </button>
 
-                        <div className="flex items-center gap-3 pl-3 md:pl-4 border-l border-gray-200/60">
-                            <div className="flex flex-col items-end hidden sm:flex">
-                                <span className="font-bold text-sm text-[#1e1e2d]">
+                        <Link href="/profile" className="flex items-center gap-3 pl-3 md:pl-4 border-l border-gray-200/60 group hover:opacity-80 transition-all">
+                            <div className="flex-col items-end hidden sm:flex">
+                                <span className="font-bold text-sm text-[#1e1e2d] group-hover:text-[#3b368c] transition-colors">
                                     {userData?.name?.split(' ')[0] || userData?.email?.split('@')[0]}
                                 </span>
                                 <span className="text-[10px] font-black text-[#3b368c] uppercase tracking-wider opacity-60">
@@ -101,14 +103,14 @@ export default function ProtectedLayout({
                                 <img
                                     src={userData.image}
                                     alt="User"
-                                    className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md"
+                                    className="w-10 h-10 rounded-full object-cover border-2 border-white shadow-md group-hover:border-[#3b368c]/20 transition-all"
                                 />
                             ) : (
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#3b368c] to-[#a5b4fc] text-white flex items-center justify-center font-black text-sm border-2 border-white shadow-md">
-                                    {userData?.name ? userData.name[0] : userData?.email?.[0]?.toUpperCase() || "U"}
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#3b368c] to-[#a5b4fc] text-white flex items-center justify-center font-black text-sm border-2 border-white shadow-md group-hover:shadow-[#3b368c]/20 transition-all">
+                                    {getInitials(userData?.name || userData?.email)}
                                 </div>
                             )}
-                        </div>
+                        </Link>
                     </div>
                 </header>
 

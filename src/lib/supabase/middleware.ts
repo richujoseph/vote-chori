@@ -47,10 +47,18 @@ export async function updateSession(request: NextRequest) {
             url.searchParams.set('error', 'unauthorized_domain')
             return NextResponse.redirect(url)
         }
+
+        // Redirect authenticated users from landing page to dashboard
+        if (request.nextUrl.pathname === '/') {
+            const url = request.nextUrl.clone()
+            url.pathname = '/dashboard'
+            return NextResponse.redirect(url)
+        }
     }
 
     if (
         !user &&
+        request.nextUrl.pathname !== '/' &&
         !request.nextUrl.pathname.startsWith('/login') &&
         !request.nextUrl.pathname.startsWith('/auth')
     ) {

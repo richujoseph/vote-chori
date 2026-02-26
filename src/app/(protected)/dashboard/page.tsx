@@ -8,12 +8,14 @@ export default function DashboardPage() {
     const { data: user, isLoading: userLoading } = trpc.auth.me.useQuery();
     const { data: ongoingElections, isLoading: electionsLoading } = trpc.election.getOngoing.useQuery();
     const { data: allElections } = trpc.election.getAll.useQuery();
+    const { data: stats } = trpc.analytics.getStats.useQuery();
+    const { data: livePulse } = trpc.analytics.getCurrentResults.useQuery();
 
     const firstName = user?.name ? user.name.split(" ")[0] : user?.email?.split('@')[0] || "User";
 
     const completedCount = allElections?.filter((e) => e.status === "completed").length ?? 0;
-    const totalVotes = 344; // Placeholder
-    const registeredVoters = 362;
+    const totalVotes = stats?.totalVotes ?? 0;
+    const registeredVoters = stats?.totalUsers ?? 0;
 
     return (
         <div className="p-4 md:p-8 max-w-[1200px] mx-auto pb-20">
@@ -73,31 +75,40 @@ export default function DashboardPage() {
                         {/* Live Results Card */}
                         <div className="bg-white rounded-[32px] p-6 md:p-8 shadow-sm border border-gray-100 flex flex-col">
                             <div className="flex items-center justify-between mb-8">
-                                <h2 className="text-[#1e1e2d] font-black text-base uppercase tracking-widest">Live Pulse</h2>
+                                <h2 className="text-[#1e1e2d] font-black text-base uppercase tracking-widest">{livePulse?.electionTitle || "Live Pulse"}</h2>
                                 <div className="p-2 rounded-xl bg-gray-50 text-gray-400">
                                     <Award size={18} />
                                 </div>
                             </div>
 
                             <div className="space-y-6 flex-1">
-                                {[
-                                    { name: "Nominee A", color: "#3b368c", width: "42%" },
-                                    { name: "Nominee B", color: "#a5b4fc", width: "35%" },
-                                    { name: "Nominee C", color: "#f0f0ff", width: "23%" },
-                                ].map((item, i) => (
-                                    <div key={i} className="space-y-2">
-                                        <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
-                                            <span className="text-gray-400">{item.name}</span>
-                                            <span className="text-[#1e1e2d]">{item.width}</span>
-                                        </div>
-                                        <div className="w-full h-3 bg-gray-50 rounded-full overflow-hidden">
-                                            <div
-                                                className="h-full rounded-full transition-all duration-1000 ease-out"
-                                                style={{ width: item.width, backgroundColor: item.color }}
-                                            />
-                                        </div>
+                                {livePulse?.candidates && livePulse.candidates.length > 0 ? (
+                                    livePulse.candidates.map((item, i) => {
+                                        const percentage = livePulse.totalVotes > 0
+                                            ? Math.round((item.voteCount / livePulse.totalVotes) * 100)
+                                            : 0;
+                                        const colors = ["#3b368c", "#a5b4fc", "#f0f0ff"];
+
+                                        return (
+                                            <div key={i} className="space-y-2">
+                                                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                                                    <span className="text-gray-400 truncate max-w-[150px]">{item.name}</span>
+                                                    <span className="text-[#1e1e2d]">{item.voteCount} votes ({percentage}%)</span>
+                                                </div>
+                                                <div className="w-full h-3 bg-gray-50 rounded-full overflow-hidden">
+                                                    <div
+                                                        className="h-full rounded-full transition-all duration-1000 ease-out"
+                                                        style={{ width: `${percentage}%`, backgroundColor: colors[i % colors.length] }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        );
+                                    })
+                                ) : (
+                                    <div className="flex flex-col items-center justify-center h-full text-center py-8">
+                                        <p className="text-gray-300 text-xs italic">No voting data available yet.</p>
                                     </div>
-                                ))}
+                                )}
                             </div>
                             <Link href="/results" className="mt-8 text-center text-xs font-black text-[#3b368c] uppercase tracking-widest hover:underline">
                                 View Full Analytics
@@ -111,7 +122,7 @@ export default function DashboardPage() {
                                 {allElections?.slice(0, 3).map((election) => (
                                     <div key={election.id} className="flex gap-4 group">
                                         <div className={`w-10 h-10 rounded-2xl flex-shrink-0 flex items-center justify-center ${election.status === 'ongoing' ? 'bg-green-50 text-green-500' :
-                                                election.status === 'completed' ? 'bg-[#3b368c]/5 text-[#3b368c]' : 'bg-gray-50 text-gray-400'
+                                            election.status === 'completed' ? 'bg-[#3b368c]/5 text-[#3b368c]' : 'bg-gray-50 text-gray-400'
                                             }`}>
                                             <CheckCircle2 size={18} />
                                         </div>
@@ -136,24 +147,26 @@ export default function DashboardPage() {
                     {/* Calendar Placeholder */}
                     <div className="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100">
                         <div className="flex items-center justify-between mb-8">
-                            <h2 className="text-[#1e1e2d] font-black text-base uppercase tracking-widest">Calendar</h2>
+                            <h2 className="text-[#1e1e2d] font-black text-base uppercase tracking-widest">Election Cycle</h2>
                             <Calendar size={18} className="text-gray-300" />
                         </div>
                         <div className="flex flex-col gap-6">
                             <div className="flex items-center gap-6">
                                 <div className="flex flex-col items-center">
-                                    <span className="text-[10px] font-black text-[#3b368c] uppercase tracking-tighter">FEB</span>
-                                    <span className="text-2xl font-black text-[#1e1e2d]">26</span>
+                                    <span className="text-[10px] font-black text-[#3b368c] uppercase tracking-tighter">
+                                        {new Date().toLocaleString('default', { month: 'short' }).toUpperCase()}
+                                    </span>
+                                    <span className="text-2xl font-black text-[#1e1e2d]">{new Date().getDate()}</span>
                                 </div>
                                 <div className="h-10 w-px bg-gray-100" />
                                 <div className="flex-1">
-                                    <p className="text-sm font-bold text-[#1e1e2d] mb-1">Today's Pulse</p>
-                                    <p className="text-[10px] text-gray-400 font-medium">Standard Voting Day</p>
+                                    <p className="text-sm font-bold text-[#1e1e2d] mb-1">Election Day</p>
+                                    <p className="text-[10px] text-gray-400 font-medium tracking-tight">System is live for voting</p>
                                 </div>
                             </div>
                             <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between">
-                                <span className="text-[10px] font-black text-[#1e1e2d] uppercase tracking-widest">Next Election</span>
-                                <span className="text-[10px] font-bold text-gray-400">March 12</span>
+                                <span className="text-[10px] font-black text-[#1e1e2d] uppercase tracking-widest">Total Elections</span>
+                                <span className="text-[10px] font-bold text-gray-400">{stats?.totalElections || 0}</span>
                             </div>
                         </div>
                     </div>
@@ -196,8 +209,8 @@ export default function DashboardPage() {
 
                         <div className="mt-10 pt-8 border-t border-gray-50">
                             <div className="flex items-center gap-2 text-[10px] font-black text-[#3b368c] uppercase tracking-widest">
-                                <TrendingUp size={12} />
-                                <span>+12% spike since morning</span>
+                                <ShieldCheck size={12} />
+                                <span>Secured by Blockchain</span>
                             </div>
                         </div>
                     </div>
