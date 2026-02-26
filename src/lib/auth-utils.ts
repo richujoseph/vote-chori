@@ -16,29 +16,27 @@ export async function getOptionalSession() {
 }
 
 export function extractStudentDetails(email: string) {
-    const [localPart, domain] = email.toLowerCase().split('@');
+    const localPart = email.split('@')[0];
+    const match = localPart.match(/^(\d{2})([a-zA-Z]{1,3})(\d{3,4})$/i);
 
-    const yearMatch = localPart.match(/(20\d{2})/);
+    if (match) {
+        const batchStart = `20${match[1]}`;
+        const deptCode = match[2].toUpperCase();
 
-    const deptMatch = domain.match(/^([a-z]{1,3})\./);
+        const depts: Record<string, string> = {
+            'CS': 'Computer Science',
+            'EC': 'Electronics & Communication',
+            'EE': 'Electrical & Electronics',
+            'ME': 'Mechanical Engineering',
+            'CE': 'Civil Engineering',
+            'AD': 'Artificial Intelligence & Data Science',
+            'CY': 'Cyber Security',
+        };
 
-    if (!yearMatch || !deptMatch) return {};
-
-    const batchStart = Number(yearMatch[1]);
-    const deptCode = deptMatch[1].toUpperCase();
-
-    const depts: Record<string, string> = {
-        'CS': 'Computer Science',
-        'EC': 'Electronics & Communication',
-        'EE': 'Electrical & Electronics',
-        'ME': 'Mechanical Engineering',
-        'CE': 'Civil Engineering',
-        'AD': 'Artificial Intelligence & Data Science',
-        'CY': 'Cyber Security',
-    };
-
-    return {
-        batch: `${batchStart}`,
-        department: depts[deptCode] || deptCode,
-    };
+        return {
+            batch: `${batchStart} - ${Number(batchStart) + 4}`,
+            department: depts[deptCode] || deptCode,
+        };
+    }
+    return {};
 }

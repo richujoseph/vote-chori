@@ -9,7 +9,7 @@ export const authRouter = router({
     }),
 
     me: protectedProcedure.query(async ({ ctx }) => {
-        // if (ctx.dbUser) return { ...ctx.dbUser, dbConnected: true };
+        if (ctx.dbUser) return { ...ctx.dbUser, dbConnected: true };
 
         // Auto-sync user if they are missing from DB but authenticated in Supabase
         const email = ctx.user.email!;
@@ -45,8 +45,8 @@ export const authRouter = router({
             image: ctx.user.user_metadata.avatar_url || ctx.user.user_metadata.picture || null,
             role: isDeveloper ? "admin" : "student",
             createdAt: new Date(ctx.user.created_at),
-            department: studentDetails.department,
-            batch: studentDetails.batch,
+            department: null,
+            batch: null,
             dbConnected: false,
         };
     }),
