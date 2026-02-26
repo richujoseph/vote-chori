@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { trpc } from "@/trpc/client";
+import { getInitials } from "@/lib/utils";
 import {
     LayoutDashboard,
     Vote,
@@ -38,12 +39,7 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean, se
 
     const isAdmin = user?.role === "admin";
 
-    const initials = (user?.name || user?.email || "?")
-        .split(" ")
-        .map((n: string) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2);
+    const initials = getInitials(user?.name || user?.email);
 
     const handleSignOut = async () => {
         await supabase.auth.signOut();
@@ -74,7 +70,7 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean, se
 
                 {/* Profile Peek */}
                 <div className="px-6 mb-12">
-                    <div className="bg-gray-50/50 rounded-3xl p-5 border border-gray-50 flex items-center gap-4 group hover:bg-[#3b368c]/5 transition-all">
+                    <Link href="/profile" className="bg-gray-50/50 rounded-3xl p-5 border border-gray-50 flex items-center gap-4 group hover:bg-[#3b368c]/5 transition-all">
                         <div className="w-12 h-12 rounded-2xl bg-[#f0f0ff] flex items-center justify-center overflow-hidden border-2 border-white shadow-sm shrink-0 group-hover:scale-105 transition-transform">
                             {userLoading ? (
                                 <div className="w-full h-full bg-gray-100 animate-pulse" />
@@ -90,11 +86,11 @@ export function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean, se
                             ) : (
                                 <span className="font-black text-sm text-[#1e1e2d] truncate">{user?.name?.split(' ')[0] || "User"}</span>
                             )}
-                            <Link href="/profile" className="text-[10px] font-black text-[#3b368c] uppercase tracking-widest opacity-60 hover:opacity-100 transition-opacity flex items-center mt-0.5">
+                            <div className="text-[10px] font-black text-[#3b368c] uppercase tracking-widest opacity-60 group-hover:opacity-100 transition-opacity flex items-center mt-0.5">
                                 My Profile <ChevronRight size={10} className="ml-0.5" />
-                            </Link>
+                            </div>
                         </div>
-                    </div>
+                    </Link>
                 </div>
 
                 {/* Navigation */}
