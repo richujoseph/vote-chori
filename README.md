@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Demokratia - SJCET Online Election System
 
-## Getting Started
+A secure, high-performance web platform designed for managing college elections with real-time results and administrative oversight.
 
-First, run the development server:
+## System Overview
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+The system is engineered to handle large-scale student union elections with high reliability and security. It facilitates the entire election lifecycle—from candidate nomination and election staging to real-time vote counting and final result publication.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Core Workflows
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Election Lifecycle**: Elections transition through three states: `upcoming` (preparation), `ongoing` (active voting), and `completed` (archived results).
+- **Staged Voting**: Voters can only participate in elections marked as `ongoing`.
+- **Administrative Control**: Admins manage the creation of elections, categories (e.g., President, Secretary), and candidate profiles.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Technical Architecture
 
-## Learn More
+### Infrastructure
+- **Database**: PostgreSQL hosted on **Supabase** for high availability and performance.
+- **Object Storage**: **Supabase Storage** for managing candidate photographs and other media assets.
+- **Backend Environment**: Next.js App Router with server-side logic protection.
 
-To learn more about Next.js, take a look at the following resources:
+### Security
+- **Authentication**: **NextAuth.js** with Google OAuth, strictly limited to the institutional domain (`@sjcetpalai.ac.in`).
+- **Authorization (RBAC)**: Fine-grained access control for `student` and `admin` roles.
+- **Data Integrity**: Database-level unique constraints (via **Drizzle ORM**) ensure "one person, one vote" logic across all categories.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### API & Frontend
+- **API Layer**: **tRPC** for end-to-end typesafe communication.
+- **UI Framework**: **Tailwind CSS 4** for a modern, responsive interface.
+- **Visualization**: **Recharts** for real-time result analytics.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Setup & Deployment
 
-## Deploy on Vercel
+### Prerequisites
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Node.js 18+
+- Supabase Project (for DB and Storage)
+- Google Cloud Console project (for OAuth credentials)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Local Installation
+
+1.  **Clone and Install:**
+    ```bash
+    git clone https://github.com/TimsTittus/Demokratia.git
+    cd Demokratia
+    npm install
+    ```
+
+2.  **Environment Setup:**
+    Create a `.env` file with the following keys:
+    ```env
+    # Database
+    DATABASE_URL=
+    
+    # NextAuth
+    NEXTAUTH_URL=http://localhost:3000
+    NEXTAUTH_SECRET=
+    
+    # Google OAuth
+    GOOGLE_CLIENT_ID=
+    GOOGLE_CLIENT_SECRET=
+    
+    # Supabase (Storage & Assets)
+    NEXT_PUBLIC_SUPABASE_URL=
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=
+    ```
+
+3.  **Database Initialisation:**
+    ```bash
+    npm run db:push
+    ```
+
+4.  **Running Development Server:**
+    ```bash
+    npm run dev
+    ```
+
+## Development Commands
+
+- `npm run dev`: Start local development server.
+- `npm run build`: Generate production build.
+- `npm run db:studio`: GUI for database management.
+
+## Contributing
+
+1.  Fork the project and create your feature branch.
+2.  Ensure code follows the project's ESLint configuration.
+3.  Submit a Pull Request with a clear description of changes.
