@@ -29,6 +29,7 @@ export function extractStudentDetails(email: string) {
         'ME': 'Mechanical Engineering',
         'CE': 'Civil Engineering',
         'AD': 'Artificial Intelligence & Data Science',
+        'CC': 'Cyber Security',
         'CY': 'Cyber Security',
     };
 

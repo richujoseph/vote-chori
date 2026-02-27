@@ -15,8 +15,9 @@ export async function GET(request: Request) {
         const { data, error } = await supabase.auth.exchangeCodeForSession(code)
 
         if (!error && data.user) {
-            const domain = "cy.sjcetpalai.ac.in"
-            if (!data.user.email?.endsWith(`@${domain}`)) {
+            const allowedDomains = ["cy.sjcetpalai.ac.in", "cc.sjcetpalai.ac.in"]
+            const emailDomain = data.user.email?.split("@")[1]
+            if (!emailDomain || !allowedDomains.includes(emailDomain)) {
                 await supabase.auth.signOut()
                 return NextResponse.redirect(`${origin}/login?error=unauthorized_domain`)
             }

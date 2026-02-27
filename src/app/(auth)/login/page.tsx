@@ -22,7 +22,7 @@ function LoginContent() {
                 options: {
                     redirectTo: `${window.location.origin}/auth/callback?next=${redirectTo}`,
                     queryParams: {
-                        hd: "cy.sjcetpalai.ac.in",
+                        hd: "sjcetpalai.ac.in",
                         prompt: "select_account",
                     },
                 },
@@ -54,14 +54,14 @@ function LoginContent() {
                     <div className="flex items-center gap-3 px-4 py-3 bg-red-50 rounded-xl mb-6 text-sm font-semibold text-red-600 w-full text-left">
                         <AlertCircle size={20} className="shrink-0" />
                         {error === "unauthorized_domain"
-                            ? "Access denied. Only @cy.sjcetpalai.ac.in emails are allowed."
+                            ? "Access denied. Only @cy.sjcetpalai.ac.in and @cc.sjcetpalai.ac.in emails are allowed."
                             : "An error occurred during sign in. Please try again."}
                     </div>
                 )}
 
                 <div className="flex items-center justify-center gap-2 bg-[#f0f0ff] text-[#3b368c] text-xs font-bold px-4 py-2 rounded-full mb-8">
                     <Shield size={16} />
-                    Only @cy.sjcetpalai.ac.in accounts allowed
+                    Only @sjcetpalai.ac.in accounts allowed
                 </div>
 
                 <button

@@ -37,9 +37,10 @@ export async function updateSession(request: NextRequest) {
 
     if (user) {
         const email = user.email
-        const domain = "cy.sjcetpalai.ac.in"
+        const allowedDomains = ["cy.sjcetpalai.ac.in", "cc.sjcetpalai.ac.in"]
+        const emailDomain = email?.split("@")[1]
 
-        if (!email?.endsWith(`@${domain}`)) {
+        if (!emailDomain || !allowedDomains.includes(emailDomain)) {
             // Unauthorized domain - Sign out and redirect
             await supabase.auth.signOut()
             const url = request.nextUrl.clone()
