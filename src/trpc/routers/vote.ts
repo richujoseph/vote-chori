@@ -156,7 +156,7 @@ export const voteRouter = router({
 
                     candidateResults.push({
                         ...candidate,
-                        voteCount: voteCount?.count ?? 0,
+                        voteCount: isOngoing ? 0 : (voteCount?.count ?? 0),
                     });
                 }
 
@@ -166,15 +166,15 @@ export const voteRouter = router({
                 results.push({
                     category,
                     candidates: candidateResults,
-                    totalVotes: candidateResults.reduce((sum, c) => sum + c.voteCount, 0),
-                    resultsHidden: false, // Default to false as we want them visible as percentages
+                    totalVotes: isOngoing ? 0 : candidateResults.reduce((sum, c) => sum + c.voteCount, 0),
+                    resultsHidden: isOngoing,
                 });
             }
 
             return {
                 election,
                 results,
-                resultsHidden: false, // Default to false
+                resultsHidden: isOngoing,
             };
         }),
 });

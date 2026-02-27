@@ -73,10 +73,15 @@ async function getElectionResults(db: any, electionId: string, status: string) {
 
     const totalVotes = candidateResults.reduce((sum, c) => sum + c.voteCount, 0);
 
+    const isOngoing = status === "ongoing";
+
     return {
         electionTitle: category.title,
         status,
-        candidates: candidateResults.sort((a, b) => b.voteCount - a.voteCount).slice(0, 3),
-        totalVotes,
+        candidates: candidateResults.sort((a, b) => b.voteCount - a.voteCount).slice(0, 3).map(c => ({
+            ...c,
+            voteCount: isOngoing ? 0 : c.voteCount,
+        })),
+        totalVotes: isOngoing ? 0 : totalVotes,
     };
 }

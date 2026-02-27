@@ -108,17 +108,33 @@ function ResultsContent() {
                     <div className="w-12 h-12 border-4 border-[#3b368c]/10 border-t-[#3b368c] rounded-full animate-spin" />
                     <p className="mt-6 text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Synching Data</p>
                 </div>
+            ) : resultsHidden ? (
+                <div className="bg-white rounded-[40px] p-20 shadow-sm border border-gray-100 flex flex-col items-center text-center py-32">
+                    <div className="relative mb-8">
+                        <div className="w-24 h-24 rounded-full border-8 border-[#3b368c]/5 border-t-[#3b368c] animate-spin" />
+                        <ShieldCheck className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#3b368c]" size={40} />
+                    </div>
+                    <h2 className="text-2xl font-black text-[#1e1e2d] mb-4 uppercase tracking-tight">Election in Progress</h2>
+                    <p className="text-gray-400 text-sm max-w-md mx-auto leading-relaxed">
+                        Results will be revealed once the election concludes. Check back after voting ends to see the final tally.
+                    </p>
+                    <div className="mt-12 flex items-center gap-3 px-6 py-3 bg-[#3b368c]/5 rounded-2xl border border-[#3b368c]/10">
+                        <span className="relative flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </span>
+                        <span className="text-[10px] font-black text-[#3b368c] uppercase tracking-widest">Voting is currently active</span>
+                    </div>
+                </div>
             ) : activeResult ? (
                 <div className="space-y-12">
                     {/* Status Banner */}
                     <div className="flex items-center gap-4 bg-white border border-gray-100 p-4 md:p-5 rounded-[24px] w-fit shadow-sm mx-auto mb-16 px-6 md:px-8">
                         <div className="flex items-center gap-2 pr-4 border-r border-gray-100">
                             <Award size={20} className="text-yellow-500" />
-                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">
-                                {election?.status === "ongoing" ? "Live Progress" : "Final Tally"}
-                            </span>
+                            <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Final Tally</span>
                         </div>
-                        <span className="text-xs md:text-sm font-black text-[#1e1e2d] tracking-tight uppercase tracking-widest text-[10px]">
+                        <span className="text-[10px] font-black text-[#1e1e2d] uppercase tracking-widest">
                             Results showing as <span className="text-[#3b368c] font-black">Relative Percentage</span>
                         </span>
                     </div>

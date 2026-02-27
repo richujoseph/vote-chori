@@ -82,7 +82,16 @@ export default function DashboardPage() {
                             </div>
 
                             <div className="space-y-6 flex-1">
-                                {livePulse?.candidates && livePulse.candidates.length > 0 ? (
+                                {livePulse?.status === "ongoing" ? (
+                                    <div className="flex flex-col items-center justify-center h-full text-center py-8">
+                                        <div className="relative mb-6">
+                                            <div className="w-16 h-16 rounded-full border-4 border-[#3b368c]/10 border-t-[#3b368c] animate-spin" />
+                                            <ShieldCheck className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-[#3b368c]" size={24} />
+                                        </div>
+                                        <p className="text-[#1e1e2d] font-black text-xs uppercase tracking-widest mb-2">Election is Running</p>
+                                        <p className="text-gray-400 text-[10px] font-medium max-w-[180px]">Results will be revealed once the election concludes.</p>
+                                    </div>
+                                ) : livePulse?.candidates && livePulse.candidates.length > 0 ? (
                                     livePulse.candidates.map((item, i) => {
                                         const percentage = livePulse.totalVotes > 0
                                             ? Math.round((item.voteCount / livePulse.totalVotes) * 100)
