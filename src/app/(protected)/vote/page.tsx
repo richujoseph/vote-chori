@@ -195,9 +195,9 @@ function CategorySection({
     return (
         <div className="w-full">
             <div className="flex items-center gap-4 mb-8">
-                <div className="h-px bg-gray-100 flex-1" />
-                <h2 className="text-xs font-black text-gray-300 uppercase tracking-[0.3em]">{category.title}</h2>
-                <div className="h-px bg-gray-100 flex-1" />
+                <div className="h-px bg-gray-200 flex-1" />
+                <h2 className="text-sm md:text-xs font-black text-[#1e1e2d] uppercase tracking-[0.2em]">{category.title}</h2>
+                <div className="h-px bg-gray-200 flex-1" />
             </div>
 
             {isLoading ? (
@@ -214,8 +214,8 @@ function CategorySection({
                             <div
                                 key={candidate.id}
                                 className={`group relative bg-white rounded-[32px] border transition-all duration-300 overflow-hidden ${isSelected || isVoted
-                                        ? "border-[#3b368c] ring-1 ring-[#3b368c] shadow-xl shadow-[#3b368c]/5"
-                                        : "border-gray-100 hover:border-[#3b368c]/30 hover:shadow-lg shadow-sm"
+                                    ? "border-[#3b368c] ring-1 ring-[#3b368c] shadow-xl shadow-[#3b368c]/5"
+                                    : "border-gray-100 hover:border-[#3b368c]/30 hover:shadow-lg shadow-sm"
                                     }`}
                                 onClick={() => !hasVoted && onSelect(candidate.id)}
                                 style={{ cursor: hasVoted ? "default" : "pointer" }}
@@ -254,8 +254,8 @@ function CategorySection({
                                             )
                                         ) : (
                                             <button className={`w-full py-3.5 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 ${isSelected
-                                                    ? "bg-[#3b368c] text-white shadow-lg shadow-[#3b368c]/20"
-                                                    : "bg-white border border-gray-100 text-[#3b368c] hover:bg-gray-50"
+                                                ? "bg-[#3b368c] text-white shadow-lg shadow-[#3b368c]/20"
+                                                : "bg-white border border-gray-100 text-[#3b368c] hover:bg-gray-50"
                                                 }`}>
                                                 {isSelected ? "Selected" : "Select Candidate"}
                                                 <ChevronRight size={14} className={isSelected ? "translate-x-1 transition-transform" : ""} />
